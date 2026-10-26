@@ -1,0 +1,29 @@
+---
+import { formatDate } from '../lib/papers.mjs';
+import { href } from '../lib/site.mjs';
+import type { FeedItem } from '../lib/feed';
+
+interface Props {
+  item: FeedItem;
+  /** Say whether the entry is an article or a paper, on lists that mix both. */
+  showKind?: boolean;
+  /** Heading level of the title: 2 on list pages, 3 under a section heading. */
+  level?: 2 | 3;
+}
+
+const { item, showKind = false, level = 2 } = Astro.props;
+const Title = level === 3 ? 'h3' : 'h2';
+---
+
+<li class={`post post-${item.kind}`}>
+  <p class="post-meta">
+    {showKind && <span class={`kind kind-${item.kind}`}>{item.kind === 'paper' ? 'Paper' : 'Article'}</span>}
+    {item.date && <time datetime={item.date}>{formatDate(item.date)}</time>}
+    {item.readingTime && <span>{item.readingTime} min read</span>}
+    {item.reference && <span>{item.reference}</span>}
+    {item.draft && <span class="draft-tag">Draft</span>}
+  </p>
+  <Title class="post-title"><a href={href(item.path)}>{item.title}</a></Title>
+  {item.byline && <p class="post-byline">{item.byline}</p>}
+  {item.summary && <p class="post-summary">{item.summary}</p>}
+</li>

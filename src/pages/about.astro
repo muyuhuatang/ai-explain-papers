@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../../site.config.mjs';
+import { licenseInfo } from '../lib/papers.mjs';
+import { github, href, ownerLinks } from '../lib/site.mjs';
+
+const releasesUrl = github.releases();
+const defaultLicense = licenseInfo(site.defaultLicense);
+---
+
+<Base title="About" description={`About ${site.name} and ${site.owner.name}.`} path="/about/" section="about">
+  <div class="column">
+    <header class="page-head">
+      <h1>About</h1>
+      <p class="lede">{site.intro}</p>
+      {
+        ownerLinks.length > 0 && (
+          <p class="link-row">
+            {ownerLinks.map((link) => (
+              <a href={link.href}>{link.label}</a>
+            ))}
+          </p>
+        )
+      }
+    </header>
+
+    <div class="prose">
+      <h2>Articles and papers</h2>
+      <p>{site.name} has two kinds of posts. <a href={href('/blog/')}>Articles</a> explain research in plain language. <a href={href('/papers/')}>Papers</a> are the research itself, published as preprints with a PDF, a citation and a full version history.</p>
+      <p>Papers have not been peer reviewed. A paper published here may later appear, revised, in a journal or at a conference.</p>
+
+      <h2>How papers are published</h2>
+      <ul>
+        <li>Each paper gets a permanent number, such as {site.reportPrefix}-2026-001, and a page whose address never changes.</li>
+        <li>Revisions are published as new versions. Every earlier version stays online, unchanged.</li>
+        <li>Each PDF is fingerprinted with SHA-256 when it is added, and the site refuses to publish a file that no longer matches its fingerprint.</li>
+        <li>When a version is first published, a GitHub release records the PDF and its fingerprint{site.immutableReleases ? ', and the release cannot be changed afterwards' : ''}.{releasesUrl && <> All releases are listed on <a href={releasesUrl}>GitHub</a>.</>}</li>
+      </ul>
+      <p>To check a download, compute its SHA-256 fingerprint (<code>shasum -a 256 paper.pdf</code> on macOS and Linux, <code>Get-FileHash paper.pdf -Algorithm SHA256</code> in Windows PowerShell) and compare it with the value on the paper’s page.</p>
+
+      <h2>Citing a paper</h2>
+      <p>Each paper’s page has a formatted citation and a BibTeX record. Please cite the version you read, since versions can differ.</p>
+
+      <h2>Licences</h2>
+      <p>Each paper states its licence on its page. Unless a paper says otherwise, it is published under the {defaultLicense.url ? <a href={defaultLicense.url}>{defaultLicense.name}</a> : defaultLicense.name} licence.</p>
+    </div>
+  </div>
+</Base>

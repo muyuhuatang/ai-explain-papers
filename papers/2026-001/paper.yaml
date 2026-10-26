@@ -1,0 +1,36 @@
+# Metadata for AIE-WP-2026-001. Field reference: README.md, "Paper metadata".
+id: 2026-001
+title: "The LLM Belief Atlas: Visualizing How Language-Model Stances Depend on Elicitation"
+# Authors in the order printed on the PDF. Add an entry (name, affiliation,
+# optional orcid) for each co-author, and remove the first one if you are not
+# an author of this paper.
+authors:
+  - name: Fan Huang
+    affiliation: Indiana University Bloomington
+    orcid: 0000-0002-3097-0484
+abstract: |
+  What a language model appears to believe about a proposition is not a scalar
+  but a signal that depends on how it is elicited and read: forcing a choice can
+  fabricate a value, option-logprob scoring carries order bias, and sycophancy
+  makes a stance a function of framing. We present the LLM Belief Atlas, a
+  scalable in-browser WebGL instrument organized around a framework of belief
+  spaces. The framework treats a model’s stance as a latent construct observed
+  only through a four-dimensional measurement space, model, item, elicitation
+  condition, and readout channel, and names seven subspaces, each bound to a
+  facet of psychometric construct validity. The instrument co-registers three
+  switchable belief readouts (Likert agreement, free-text reflection, and option
+  logprobs) of the same elicitation instances and morphs between them at the
+  million-point scale, while exposing uncertainty. On 76,048 elicited beliefs
+  from four LLMs, framing conditions explain 34.2% of stance variance, against
+  46.8% for belief itself (and on par with it on the two natively-read models),
+  but a within-model reliability measure does not predict cross-model
+  reproducibility beyond noise.
+keywords: [Large language models, belief elicitation, measurement, construct validity, dimensionality reduction, scalable scatterplot visualization, uncertainty visualization]
+language: en
+license: CC-BY-4.0
+# Add the PDF of each version with: npm run paper:version -- 2026-001 path/to/paper.pdf
+versions:
+  - version: v1.0
+    date: 2026-10-26
+    sha256: 862804f8064ce29a880bb1c6c2ffdbf6d126dad76ba4171fa9567f8d15543115
+    changes: Initial release.

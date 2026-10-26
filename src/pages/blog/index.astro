@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostItem from '../../components/PostItem.astro';
+import { getArticles } from '../../lib/articles';
+import { articleItem } from '../../lib/feed';
+
+const articles = (await getArticles()).map(articleItem);
+---
+
+<Base title="Articles" description="Plain-language articles about AI research." path="/blog/" section="blog">
+  <div class="column">
+    <header class="page-head">
+      <h1>Articles</h1>
+      <p class="lede">Plain-language writing about AI research, including what my own papers find.</p>
+    </header>
+    {
+      articles.length ? (
+        <ol class="post-list">
+          {articles.map((item) => (
+            <PostItem item={item} />
+          ))}
+        </ol>
+      ) : (
+        <p class="empty">No articles yet. The first one will appear here.</p>
+      )
+    }
+  </div>
+</Base>

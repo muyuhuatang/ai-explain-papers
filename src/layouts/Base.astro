@@ -1,0 +1,91 @@
+---
+import '@fontsource-variable/atkinson-hyperlegible-next';
+import '@fontsource-variable/atkinson-hyperlegible-next/wght-italic.css';
+import '@fontsource-variable/atkinson-hyperlegible-mono';
+import '../styles/global.css';
+import site from '../../site.config.mjs';
+import { absolute, href, repoUrl } from '../lib/site.mjs';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Site-relative path of this page, used for the canonical URL. Omit for pages without one (404). */
+  path?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+  section?: 'blog' | 'papers' | 'about';
+}
+
+const { title, description = site.description, path, noindex = false, type = 'website', section } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name}: ${site.tagline.replace(/\.$/, '')}`;
+const canonical = path ? absolute(path) : undefined;
+const year = new Date().getFullYear();
+const current = (name: Props['section']) => (section === name ? 'page' : undefined);
+---
+
+<!doctype html>
+<html lang={site.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e1525" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={site.name} href={href('/rss.xml')} />
+    <link rel="sitemap" href={href('/sitemap.xml')} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title ?? site.name} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta name="twitter:card" content="summary" />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="frame">
+        <a class="wordmark" href={href('/')}>
+          <svg class="mark" viewBox="0 0 40 12" aria-hidden="true">
+            <defs>
+              <linearGradient id="stance-scale" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0" stop-color="#2166ac"></stop>
+                <stop offset="0.25" stop-color="#92c5de"></stop>
+                <stop offset="0.5" stop-color="#f7f7f7"></stop>
+                <stop offset="0.75" stop-color="#f4a582"></stop>
+                <stop offset="1" stop-color="#b2182b"></stop>
+              </linearGradient>
+            </defs>
+            <rect x="0.5" y="3.5" width="39" height="5" rx="2.5" fill="url(#stance-scale)" stroke="currentColor" stroke-opacity="0.2"></rect>
+            <rect x="25" y="0" width="3" height="12" rx="1.5" fill="currentColor"></rect>
+          </svg>
+          {site.name}
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <a class="nav-blog" href={href('/blog/')} aria-current={current('blog')}>Articles</a>
+          <a class="nav-papers" href={href('/papers/')} aria-current={current('papers')}>Papers</a>
+          <a href={href('/about/')} aria-current={current('about')}>About</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <div class="frame">
+        <slot />
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="frame">
+        <p>© {year} {site.owner.name}</p>
+        <p class="link-row">
+          <a href={href('/rss.xml')}>RSS feed</a>
+          {repoUrl && <a href={repoUrl}>Source on GitHub</a>}
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,214 @@
+---
+import Base from '../../../layouts/Base.astro';
+import OrcidLink from '../../../components/OrcidLink.astro';
+import site from '../../../../site.config.mjs';
+import { articlePath, getArticles } from '../../../lib/articles';
+import { absolute, getPapers, github, href, paths } from '../../../lib/site.mjs';
+import { bibtex, excerpt, formatBytes, formatDate, licenseInfo, plainCitation, scholarDate } from '../../../lib/papers.mjs';
+
+export function getStaticPaths() {
+  return getPapers().map((paper) => ({ params: { id: paper.id }, props: { paper } }));
+}
+
+const { paper } = Astro.props;
+const { latest } = paper;
+const pageUrl = absolute(paths.paper(paper.id));
+const pdfUrl = absolute(paths.pdf(paper.id));
+const license = licenseInfo(paper.license);
+const affiliations = [...new Set(paper.authors.map((a: any) => a.affiliation).filter(Boolean))];
+const versionsNewestFirst = [...paper.versions].reverse();
+const versionName = (version: string) => `Version ${version.slice(1)}`;
+// Articles that explain this paper in plain language.
+const explainers = (await getArticles()).filter((article) => article.data.paper === paper.id);
+
+// Google Scholar reads the Highwire Press citation_* tags; they are left out of
+// draft previews so a draft can never be indexed by accident.
+const indexable = !paper.draft && latest;
+
+const jsonLd = indexable && {
+  '@context': 'https://schema.org',
+  '@type': 'ScholarlyArticle',
+  '@id': pageUrl,
+  url: pageUrl,
+  name: paper.title,
+  headline: paper.title.length > 110 ? excerpt(paper.title, 110) : paper.title,
+  abstract: paper.abstract.replace(/\s+/g, ' '),
+  author: paper.authors.map((a: any) => ({
+    '@type': 'Person',
+    name: a.name,
+    ...(a.affiliation && { affiliation: { '@type': 'Organization', name: a.affiliation } }),
+    ...(a.orcid && { sameAs: `https://orcid.org/${a.orcid}` }),
+  })),
+  datePublished: paper.published,
+  dateModified: paper.updated,
+  version: latest.version,
+  identifier: paper.reportNumber,
+  inLanguage: paper.language,
+  ...(paper.keywords.length && { keywords: paper.keywords.join(', ') }),
+  ...(license.url && { license: license.url }),
+  isAccessibleForFree: true,
+  publisher: { '@type': 'Organization', name: site.institution },
+  encoding: { '@type': 'MediaObject', contentUrl: pdfUrl, encodingFormat: 'application/pdf' },
+};
+---
+
+<Base
+  title={paper.title}
+  description={excerpt(paper.abstract, 200)}
+  path={paths.paper(paper.id)}
+  noindex={paper.draft}
+  type="article"
+  section="papers"
+>
+  <Fragment slot="head">
+    {
+      indexable && (
+        <>
+          <meta name="citation_title" content={paper.title} />
+          {paper.authors.map((a: any) => (
+            <>
+              <meta name="citation_author" content={a.name} />
+              {a.affiliation && <meta name="citation_author_institution" content={a.affiliation} />}
+            </>
+          ))}
+          <meta name="citation_publication_date" content={scholarDate(paper.published)} />
+          <meta name="citation_online_date" content={scholarDate(paper.updated)} />
+          <meta name="citation_technical_report_institution" content={site.institution} />
+          <meta name="citation_technical_report_number" content={paper.reportNumber} />
+          <meta name="citation_pdf_url" content={pdfUrl} />
+          <meta name="citation_abstract_html_url" content={pageUrl} />
+          <meta name="citation_language" content={paper.language} />
+          {paper.keywords.length > 0 && <meta name="citation_keywords" content={paper.keywords.join('; ')} />}
+          <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
+        </>
+      )
+    }
+  </Fragment>
+
+  <article class="column">
+    <header class="paper-head">
+      {
+        paper.draft && (
+          <p class="notice">Draft preview, not published. Drafts carry no Google Scholar metadata, are left out of the sitemap and get no GitHub release. To publish, delete <code>draft: true</code> from <code>papers/{paper.id}/paper.yaml</code>.</p>
+        )
+      }
+      <p class="kind kind-paper">Paper</p>
+      <h1>{paper.title}</h1>
+      <p class="paper-authors">
+        {
+          paper.authors.map((a: any) => (
+            <span class="author">
+              {a.name}
+              {a.orcid && <OrcidLink orcid={a.orcid} name={a.name} />}
+            </span>
+          ))
+        }
+      </p>
+      {affiliations.length > 0 && <p class="paper-affiliations">{affiliations.join('; ')}</p>}
+      {
+        latest && (
+          <p class="post-meta">
+            <span>{`${versionName(latest.version)}, ${formatDate(latest.date)}`}</span>
+            {paper.versions.length > 1 && <span>{`First published ${formatDate(paper.published)}`}</span>}
+            <span>{paper.reportNumber}</span>
+          </p>
+        )
+      }
+      {
+        latest ? (
+          <p class="actions">
+            <a class="button" href={href(paths.pdf(paper.id))}>
+              Read the PDF<span class="button-note">{formatBytes(latest.size)}</span>
+            </a>
+            <a class="button button-quiet" href={href(paths.bib(paper.id))} download={`${paper.reportNumber}.bib`}>
+              Download BibTeX
+            </a>
+          </p>
+        ) : (
+          <p class="empty">No PDF has been added yet.</p>
+        )
+      }
+    </header>
+
+    <section class="paper-section" aria-labelledby="abstract">
+      <h2 id="abstract">Abstract</h2>
+      {paper.abstractParagraphs.map((p: string) => <p>{p}</p>)}
+      {paper.keywords.length > 0 && <p class="keywords">{`Keywords: ${paper.keywords.join(', ')}`}</p>}
+    </section>
+
+    {
+      explainers.length > 0 && (
+        <aside class="callout callout-explainer" aria-label="In plain language">
+          <p class="callout-label">In plain language</p>
+          {explainers.map((article) => (
+            <a class="callout-title" href={href(articlePath(article.id))}>
+              {article.data.title}
+            </a>
+          ))}
+        </aside>
+      )
+    }
+
+    {
+      latest && (
+        <section class="paper-section" aria-labelledby="cite">
+          <h2 id="cite">Cite this paper</h2>
+          <p class="citation">{plainCitation(paper, pageUrl)}</p>
+          <pre class="bibtex"><code>{bibtex(paper, pageUrl)}</code></pre>
+        </section>
+      )
+    }
+
+    <section class="paper-section" aria-labelledby="versions">
+      <h2 id="versions">Versions</h2>
+      {
+        paper.versions.length ? (
+          <ol class="versions">
+            {versionsNewestFirst.map((v: any) => (
+              <li class="version">
+                <p class="version-head">
+                  <strong>{versionName(v.version)}</strong>
+                  {v === latest && <span class="latest-tag">Latest</span>}
+                  <time datetime={v.date}>{formatDate(v.date)}</time>
+                </p>
+                {v.changes && <p class="version-changes">{v.changes}</p>}
+                <p class="version-links">
+                  <a href={href(paths.versionPdf(paper.id, v.version))}>{`PDF, ${formatBytes(v.size)}`}</a>
+                  {!paper.draft && github.release(v.tag) && <a href={github.release(v.tag)}>GitHub release</a>}
+                </p>
+                <p class="hash">
+                  SHA-256 fingerprint
+                  <code>{v.sha256}</code>
+                </p>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p class="empty">No versions yet.</p>
+        )
+      }
+      {
+        latest && (
+          <details class="verify">
+            <summary>How to check that a PDF is authentic</summary>
+            <p>Compute the SHA-256 fingerprint of the file you downloaded and compare it with the value listed above.</p>
+            <pre><code>{`# macOS / Linux\nshasum -a 256 paper.pdf\n\n# Windows PowerShell\nGet-FileHash paper.pdf -Algorithm SHA256`}</code></pre>
+            <p>The same value is recorded in the GitHub release created when the version was published, and every change to the paper is visible in the repository history.</p>
+          </details>
+        )
+      }
+      {
+        github.history(paper.id) && (
+          <p class="link-row history">
+            <a href={github.history(paper.id)}>Change history on GitHub</a>
+            {paper.hasSource && <a href={github.source(paper.id)}>Source files</a>}
+          </p>
+        )
+      }
+    </section>
+
+    <p class="license">
+      License: {license.url ? <a href={license.url} rel="license">{license.name}</a> : license.name}
+    </p>
+  </article>
+</Base>

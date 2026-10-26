@@ -1,0 +1,75 @@
+% AI Explain Working Paper: LaTeX template.
+%
+% Google Scholar reads the first page of the PDF, so keep this layout: the title in
+% a large font at the top, the authors directly below it, the abstract, and a
+% section headed "References" at the end. Export a text-based PDF (pdfLaTeX,
+% XeLaTeX, LuaLaTeX and Overleaf all do) and keep it under 5 MB.
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+
+% Paper details: keep them in sync with papers/<id>/paper.yaml.
+\newcommand{\paperid}{AIE-WP-2026-001}
+\newcommand{\paperversion}{v1.0}
+\newcommand{\paperdate}{26 October 2026}
+\newcommand{\papertitle}{Title of the Paper}
+
+\hypersetup{
+  pdftitle={\papertitle},
+  pdfauthor={First Author, Second Author},
+  pdfsubject={AI Explain Working Paper \paperid},
+}
+
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small AI Explain Working Paper \paperid}
+\fancyhead[R]{\small Version \paperversion, \paperdate}
+\fancyfoot[C]{\thepage}
+
+\title{\papertitle}
+\author{
+  First Author\\ \small AI Explain
+  \and
+  Second Author\\ \small Affiliation
+}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\begin{abstract}
+Write the abstract here. Use the same text as the abstract in paper.yaml.
+\end{abstract}
+
+\noindent\textbf{Keywords:} first keyword, second keyword
+
+\section{Introduction}
+
+Start the paper here and cite related work like this~\cite{fips180}.
+
+\section{Conclusion}
+
+Summarise the findings.
+
+% The article class titles this section "References".
+\begin{thebibliography}{9}
+
+\bibitem{fips180}
+National Institute of Standards and Technology.
+\newblock \emph{Secure Hash Standard (SHS)}.
+\newblock FIPS PUB 180-4, 2015.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostItem from '../../components/PostItem.astro';
+import site from '../../../site.config.mjs';
+import { paperItem } from '../../lib/feed';
+import { getPapers } from '../../lib/site.mjs';
+
+const papers = getPapers().map(paperItem);
+---
+
+<Base title="Papers" description={`Research papers published on ${site.name}, with every version and a citation for each.`} path="/papers/" section="papers">
+  <div class="column">
+    <header class="page-head">
+      <h1>Papers</h1>
+      <p class="lede">
+        Research papers, published as preprints. Each one has a permanent number, every version stays online, and every PDF can be checked against the fingerprint on its page. They have not been peer reviewed.
+      </p>
+    </header>
+    {
+      papers.length ? (
+        <ol class="post-list">
+          {papers.map((item) => (
+            <PostItem item={item} />
+          ))}
+        </ol>
+      ) : (
+        <p class="empty">No papers yet. The first one will appear here.</p>
+      )
+    }
+  </div>
+</Base>
