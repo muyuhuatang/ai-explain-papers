@@ -1,0 +1,21 @@
+---
+import site from '../../site.config.mjs';
+import { ownerLinks } from '../lib/site.mjs';
+
+const { owner } = site;
+---
+
+<aside class="author-box" aria-label="About the author">
+  <p class="author-label">Written by</p>
+  <p class="author-name">{owner.name}</p>
+  {owner.affiliation && <p class="author-affiliation">{owner.affiliation}</p>}
+  {
+    ownerLinks.length > 0 && (
+      <p class="link-row">
+        {ownerLinks.map((link) => (
+          <a href={link.href}>{link.label}</a>
+        ))}
+      </p>
+    )
+  }
+</aside>

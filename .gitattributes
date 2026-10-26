@@ -1,0 +1,2 @@
+# Published PDFs are fingerprinted with SHA-256: Git must never touch their bytes.
+*.pdf binary

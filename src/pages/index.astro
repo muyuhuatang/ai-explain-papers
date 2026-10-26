@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import PostItem from '../components/PostItem.astro';
+import site from '../../site.config.mjs';
+import { getFeed } from '../lib/feed';
+import { href, ownerLinks } from '../lib/site.mjs';
+
+const feed = await getFeed();
+const latest = feed.slice(0, 10);
+---
+
+<Base path="/">
+  <section class="hero">
+    <h1>{site.tagline}</h1>
+    <p class="intro">{site.intro}</p>
+    <p class="link-row">
+      <a href={href('/about/')}>About me</a>
+      {ownerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+    </p>
+  </section>
+
+  <section class="column" aria-labelledby="latest">
+    <h2 class="section-title" id="latest">Latest</h2>
+    {
+      latest.length ? (
+        <ol class="post-list">
+          {latest.map((item) => (
+            <PostItem item={item} showKind level={3} />
+          ))}
+        </ol>
+      ) : (
+        <p class="empty">Nothing is published yet. New articles and papers will appear here.</p>
+      )
+    }
+    {
+      feed.length > latest.length && (
+        <p class="link-row more">
+          <a href={href('/blog/')}>All articles</a>
+          <a href={href('/papers/')}>All papers</a>
+        </p>
+      )
+    }
+  </section>
+</Base>

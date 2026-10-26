@@ -1,0 +1,58 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import AuthorBox from '../../components/AuthorBox.astro';
+import { articlePath, getArticles, isoDate, readingTime } from '../../lib/articles';
+import { authorList, formatDate } from '../../lib/papers.mjs';
+import { getPapers, href, paths } from '../../lib/site.mjs';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article) => ({ params: { id: article.id }, props: { article } }));
+}
+
+const { article } = Astro.props;
+const { data } = article;
+const { Content } = await render(article);
+const date = isoDate(data.date);
+const file = article.filePath ?? `blog/${article.id}.md`;
+// The paper this article explains. Draft papers are only found where drafts are shown.
+const paper = data.paper ? getPapers().find((p: any) => p.id === data.paper && p.latest) : undefined;
+---
+
+<Base title={data.title} description={data.description || undefined} path={articlePath(article.id)} noindex={data.draft} type="article" section="blog">
+  <Fragment slot="head">
+    <meta property="article:published_time" content={date} />
+  </Fragment>
+
+  <article class="column">
+    <header class="article-head">
+      {data.draft && <p class="notice">Draft preview, not published. To publish, delete <code>draft: true</code> from <code>{file}</code>.</p>}
+      <h1>{data.title}</h1>
+      <p class="post-meta">
+        <time datetime={date}>{formatDate(date)}</time>
+        <span>{readingTime(article.body)} min read</span>
+      </p>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {
+      paper && (
+        <aside class="callout" aria-label="The paper behind this article">
+          <p class="callout-label">Read the paper</p>
+          <a class="callout-title" href={href(paths.paper(paper.id))}>
+            {paper.title}
+          </a>
+          <p class="callout-meta">{`${authorList(paper.authors)}, ${paper.reportNumber}, ${paper.versions.length > 1 ? 'latest version' : 'version'} ${paper.latest.version.slice(1)}`}</p>
+        </aside>
+      )
+    }
+
+    {data.tags.length > 0 && <p class="topics">Topics: {data.tags.join(', ')}</p>}
+
+    <AuthorBox />
+  </article>
+</Base>

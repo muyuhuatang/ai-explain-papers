@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { href } from '../lib/site.mjs';
+---
+
+<Base title="Page not found" noindex>
+  <div class="column">
+    <header class="page-head">
+      <h1>Page not found</h1>
+      <p class="lede">There is no page at this address. Start from the <a href={href('/')}>latest articles and papers</a>, or browse <a href={href('/papers/')}>all papers</a>.</p>
+    </header>
+  </div>
+</Base>
