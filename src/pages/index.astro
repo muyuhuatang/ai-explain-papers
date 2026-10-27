@@ -15,7 +15,13 @@ const latest = feed.slice(0, 10);
     <p class="intro">{site.intro}</p>
     <p class="link-row">
       <a href={href('/about/')}>About me</a>
-      {ownerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+      {
+        ownerLinks.map((link) => (
+          <a href={link.href} rel="me">
+            {link.label}
+          </a>
+        ))
+      }
     </p>
   </section>
 

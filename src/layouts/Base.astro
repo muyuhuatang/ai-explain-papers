@@ -64,7 +64,15 @@ const current = (name: Props['section']) => (section === name ? 'page' : undefin
             <rect x="0.5" y="3.5" width="39" height="5" rx="2.5" fill="url(#stance-scale)" stroke="currentColor" stroke-opacity="0.2"></rect>
             <rect x="25" y="0" width="3" height="12" rx="1.5" fill="currentColor"></rect>
           </svg>
-          {site.name}
+          {
+            site.brand && site.name.startsWith(`${site.brand} `) ? (
+              <span>
+                {site.brand} <span class="wordmark-rest">{site.name.slice(site.brand.length + 1)}</span>
+              </span>
+            ) : (
+              site.name
+            )
+          }
         </a>
         <nav class="site-nav" aria-label="Main">
           <a class="nav-blog" href={href('/blog/')} aria-current={current('blog')}>Articles</a>

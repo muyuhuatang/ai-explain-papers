@@ -15,8 +15,12 @@ export const articlePath = (id: string) => `/blog/${id}/`;
 /** Front matter dates are read as midnight UTC; this returns the YYYY-MM-DD written in the file. */
 export const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 
-/** Reading time in minutes, at about 230 words a minute. Code blocks are not counted. */
+/** Reading time in minutes, at about 230 words a minute. Code blocks and HTML tags (the markup of figures) are not counted. */
 export function readingTime(markdown = '') {
-  const words = markdown.replace(/```[\s\S]*?```/g, ' ').split(/\s+/).filter(Boolean).length;
+  const words = markdown
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/<[^>]*>/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean).length;
   return Math.max(1, Math.round(words / 230));
 }

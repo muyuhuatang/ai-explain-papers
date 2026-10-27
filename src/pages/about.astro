@@ -6,9 +6,25 @@ import { github, href, ownerLinks } from '../lib/site.mjs';
 
 const releasesUrl = github.releases();
 const defaultLicense = licenseInfo(site.defaultLicense);
+
+// Who is behind the site, for search engines.
+const { owner } = site;
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: owner.name,
+  ...(owner.title && { jobTitle: owner.title }),
+  ...(owner.affiliation && { affiliation: { '@type': 'CollegeOrUniversity', name: owner.affiliation } }),
+  ...(owner.website && { url: owner.website }),
+  sameAs: ownerLinks.map((link) => link.href).filter((link) => link !== owner.website),
+};
 ---
 
-<Base title="About" description={`About ${site.name} and ${site.owner.name}.`} path="/about/" section="about">
+<Base title="About" description={`About ${site.name} and ${owner.name}.`} path="/about/" section="about">
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(person).replace(/</g, '\\u003c')} />
+  </Fragment>
+
   <div class="column">
     <header class="page-head">
       <h1>About</h1>
@@ -17,7 +33,9 @@ const defaultLicense = licenseInfo(site.defaultLicense);
         ownerLinks.length > 0 && (
           <p class="link-row">
             {ownerLinks.map((link) => (
-              <a href={link.href}>{link.label}</a>
+              <a href={link.href} rel="me">
+                {link.label}
+              </a>
             ))}
           </p>
         )

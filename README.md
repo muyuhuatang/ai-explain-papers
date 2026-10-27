@@ -1,6 +1,6 @@
-# AI Explain
+# AI Explain Tech Blog
 
-Source of the **AI Explain** website: a tech blog with two kinds of posts, published with GitHub Pages.
+Source of the **AI Explain Tech Blog**, a tech blog with two kinds of posts, published with GitHub Pages. Its name sets it apart from the main AI Explain website. Papers keep "AI Explain" as their publisher.
 
 - **Articles** are blog posts written in Markdown, for example a plain-language explanation of a paper. Search engines index them like any blog post.
 - **Papers** are research papers (PDF) with a permanent number such as `AIE-WP-2026-001`, a page with the abstract, a citation and BibTeX, and a full version history. Paper pages carry the metadata Google Scholar reads, so papers can appear in Google Scholar. Articles cannot: Scholar only indexes research papers.
@@ -151,7 +151,7 @@ Inclusion is decided by Google Scholar and can take weeks or longer. Since the a
 
 ## Settings
 
-`site.config.mjs` holds the site name, the home page headline (`tagline`) and introduction (`intro`), your profile (`owner`: name, affiliation, ORCID iD, GitHub user and Google Scholar profile address), the publisher name and report prefix for papers, the default author and licence for new papers, and the `immutableReleases` flag.
+`site.config.mjs` holds the site name, the home page headline (`tagline`) and introduction (`intro`), your profile (`owner`: name, title, affiliation, ORCID iD, GitHub user, and the addresses of your homepage, Google Scholar, LinkedIn and X profiles; any left empty is hidden), the publisher name and report prefix for papers, the default author and licence for new papers, and the `immutableReleases` flag.
 
 ## Project layout
 

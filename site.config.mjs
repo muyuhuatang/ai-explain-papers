@@ -5,29 +5,37 @@
 // your own domain once one is added), so linking a domain later needs no code change.
 
 // The person behind the site, shown on the home page, the About page and under articles.
+// The details follow your personal website, https://muyuhuatang.github.io/.
 const owner = {
   name: 'Fan Huang',
+  // Shown before the affiliation under articles and on the About page.
+  title: 'Ph.D. candidate in Informatics',
   affiliation: 'Indiana University Bloomington',
   orcid: '0000-0002-3097-0484',
   github: 'muyuhuatang',
-  // Address of your Google Scholar profile, for example
-  // 'https://scholar.google.com/citations?user=XXXXXXXXXXXX'. Leave empty to hide the link.
-  scholar: '',
+  // Profile addresses. Leave any of them empty to hide its link.
+  website: 'https://muyuhuatang.github.io/',
+  scholar: 'https://scholar.google.com/citations?user=2-6ICS4AAAAJ',
+  linkedin: 'https://www.linkedin.com/in/fhuang181/',
+  x: 'https://x.com/HuangFan_Hoan',
 };
 
 export default {
-  name: 'AI Explain',
+  // Name of this site, which sets it apart from the main AI Explain website
+  // (ai-explain.org). The header shows the shared brand in bold and the rest lighter.
+  name: 'AI Explain Tech Blog',
+  brand: 'AI Explain',
 
   // Headline of the home page.
   tagline: 'Research on large language models, explained.',
 
   // Introduction under the headline and on the About page.
   intro:
-    'I’m Fan Huang, a researcher at Indiana University Bloomington. I publish my papers on large language models here, with articles that explain what they find in plain language.',
+    'I’m Fan Huang, a Ph.D. candidate in Informatics at Indiana University Bloomington. I study human–AI alignment: probing and mitigating the biases and limitations of large language models. Here I share my ongoing work, with articles that explain what they find in plain language.',
 
   // Used in search results and link previews.
   description:
-    'Papers and plain-language articles by Fan Huang on how large language models form beliefs, reason and explain themselves.',
+    'Papers and plain-language articles by Fan Huang on human–AI alignment and the biases and limitations of large language models.',
 
   language: 'en',
   owner,
@@ -36,6 +44,7 @@ export default {
 
   // Publisher of the papers. Used in Google Scholar metadata
   // (citation_technical_report_institution) and as the BibTeX `institution`.
+  // Keep it unchanged: published papers are already cited with it.
   institution: 'AI Explain',
 
   // Report numbers look like AIE-WP-2026-001. They are permanent once a paper is published.

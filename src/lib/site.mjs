@@ -45,7 +45,10 @@ const { owner } = site;
 
 /** Profile links of the site owner (home page, About page, under articles). */
 export const ownerLinks = [
+  owner.website && { label: 'Homepage', href: owner.website },
   owner.scholar && { label: 'Google Scholar', href: owner.scholar },
   owner.orcid && { label: 'ORCID', href: `https://orcid.org/${owner.orcid}` },
   owner.github && { label: 'GitHub', href: `https://github.com/${owner.github}` },
+  owner.linkedin && { label: 'LinkedIn', href: owner.linkedin },
+  owner.x && { label: 'X', href: owner.x },
 ].filter(Boolean);
